@@ -1,5 +1,6 @@
-use reqwest;
 use base64;
+use dotenv::dotenv;
+use reqwest;
 use std::collections::HashMap;
 
 async fn songs() {
@@ -8,17 +9,20 @@ async fn songs() {
 }
 
 async fn auth() {
-    let client_id = "test";
-    let client_secret = "test";
+    let client_id = std::env::var("CLIENT_ID").expect("Client ID must be set");
+    let client_secret = std::env::var("CLIENT_SECRET").expect("Client secret must be set");
     let encoded = base64::encode(format!("{}:{}", client_id, client_secret));
 
-    let mut headers = HashMap::from([
+    let headers = HashMap::from([
         ("url", "https://accounts.spotify.com/api/token"),
         ("Authorization", &*format!("{}{}", "Basic ", encoded)),
     ]);
+
+
 }
 
 #[tokio::main]
 async fn main() {
+    dotenv().ok();
     auth().await
 }
