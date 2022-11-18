@@ -1,6 +1,7 @@
 use base64;
 use dotenv::dotenv;
 use reqwest;
+use reqwest::Client;
 use std::collections::HashMap;
 
 async fn songs() {
@@ -18,7 +19,22 @@ async fn auth() {
         ("Authorization", &*format!("{}{}", "Basic ", encoded)),
     ]);
 
+    let scope = "user-read-private user-read-email";
+    let redirect_uri = "http://localhost:8888/callback";
 
+    let query = vec![
+        "response_type", "code",
+        "client_id", &client_id,
+        "scope", &scope,
+        "redirect_uri", &redirect_uri,
+    ];
+
+    let client = Client::new();
+
+    let response = client.get("https://accounts.spotify.com/authorize?")
+        .query(&query)
+        .send()
+        .await;
 }
 
 #[tokio::main]
