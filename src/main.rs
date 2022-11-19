@@ -39,24 +39,36 @@ async fn get_token() -> String {
     parsed_res.access_token
 }
 
-// let scope = "user-read-private user-read-email";
-// let redirect_uri = "http://localhost:8888/callback";
+async fn authorize() {
+    let client_id = std::env::var("CLIENT_ID").expect("Client ID must be set");
+    let client_secret = std::env::var("CLIENT_SECRET").expect("Client secret must be set");
 
-// let query = vec![
-//     "response_type", "code",
-//     "client_id", &client_id,
-//     "scope", &scope,
-//     "redirect_uri", &redirect_uri,
-// ];
+    let client = Client::new();
 
-// let response = client.get("https://accounts.spotify.com/authorize?")
-//     .query(&query)
-//     .send()
-//     .await;
+    let scope = "user-read-private user-read-email";
+    let redirect_uri = "http://localhost:8888/callback";
+
+    let query = vec![
+        "response_type", "code",
+        "client_id", &client_id,
+        "scope", &scope,
+        "redirect_uri", &redirect_uri,
+    ];
+
+    let response = client.get("https://accounts.spotify.com/authorize?")
+        .query(&query)
+        .send()
+        .await;
+
+    println!("{:?}", response);
+}
 
 #[tokio::main]
 async fn main() {
     dotenv().ok();
-    let token = get_token().await;
-    println!("{:?}", token);
+
+    // let token = get_token().await;
+    // println!("{:?}", token);
+
+    let res = authorize().await;
 }
