@@ -48,17 +48,18 @@ async fn authorize() {
     let scope = "user-read-private user-read-email";
     let redirect_uri = "http://localhost:8888/callback";
 
-    let query = vec![
-        "response_type", "code",
-        "client_id", &client_id,
-        "scope", &scope,
-        "redirect_uri", &redirect_uri,
+    let query: Vec<(&str, &str)> = vec![
+        ("response_type", "code",),
+        ("client_id", &client_id,),
+        ("scope", &scope,),
+        ("redirect_uri", &redirect_uri,),
     ];
 
-    let response = client.get("https://accounts.spotify.com/authorize?")
+    let response = client.get("https://accounts.spotify.com/authorize")
         .query(&query)
         .send()
-        .await;
+        .await
+        .expect("Failed to authorize");
 
     println!("{:?}", response);
 }
